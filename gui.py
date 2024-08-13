@@ -9,10 +9,13 @@ list_box = pg.Listbox(values=functions.get_todos(), size=(45, 12),
                       key="todos",
                       enable_events=True)
 edit_button = pg.Button('Edit')
+complete_button = pg.Button('Complete')
+exit_button = pg.Button('Exit')
 
 
 window = pg.Window('My To-do App',
-                   layout=[[label], [input_box, add_button], [list_box, edit_button]],
+                   layout=[[label], [input_box, add_button],
+                           [list_box, edit_button, complete_button], [exit_button]],
                    font=('Helvetica', 10))
 
 while True:
@@ -27,10 +30,9 @@ while True:
             todos.append(new_todo)
             functions.write_todos(todos)
             window['todos'].update(values=todos)
+            input_box.update(value='')
 
         case 'Edit':
-            print('It is Edit button...')
-
             todo_to_edit = values['todos'][0]
             todos = functions.get_todos()
             new_todo = values['todo'] + "\n"
@@ -40,12 +42,27 @@ while True:
             list_box.update(todos)
             functions.write_todos(todos)
 
+        case 'Complete':
+            todo_to_complete = values['todos'][0]
+
+            todos = functions.get_todos()
+
+            index = todos.index(todo_to_complete)
+            todos.pop(index)
+            functions.write_todos(todos)
+            input_box.update(value='')
+            list_box.update(values=todos)
+
         case 'todos':
             selected_todo = values['todos'][0].replace('\n', '')
             input_box.update(value=selected_todo)
 
+        case "Exit":
+            break
+
         case pg.WIN_CLOSED:
             break
+
 
 print("Bye...")
 window.close()
